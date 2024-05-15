@@ -22,12 +22,12 @@ dependencies {
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-  version.set("2023.1")
+  version.set("2023.3")
   type.set("IC") // Target IDE Platform
   pluginsRepositories {
     marketplace()
   }
-  plugins.set(listOf("Kotlin", "java", "PythonCore:231.8109.144"))
+  plugins.set(listOf("Kotlin", "java", "PythonCore:233.11799.300"))
 }
 
 tasks.register<RunIdeTask>("plainIdea") {
@@ -83,8 +83,7 @@ tasks {
 
   patchPluginXml {
     version.set(System.getenv("IDEALS_VERSION"))
-    sinceBuild.set("231")
-    untilBuild.set("231.*")
+    // sinceBuild.set("233")
   }
 
   signPlugin {

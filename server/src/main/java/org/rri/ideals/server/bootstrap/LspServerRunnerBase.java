@@ -1,8 +1,8 @@
 package org.rri.ideals.server.bootstrap;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.ui.CoreIconManager;
 import com.intellij.ui.IconManager;
+import com.intellij.ui.icons.CoreIconManager;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer;
@@ -42,7 +42,7 @@ public abstract class LspServerRunnerBase {
     prepareForListening();
     try {
       //noinspection UnstableApiUsage
-      IconManager.activate(new CoreIconManager());
+      IconManager.Companion.activate(new CoreIconManager());
     } catch (Throwable e) {
       LOG.warn("Core icon manager can't be loaded:\n" + e);
     }

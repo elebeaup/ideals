@@ -10,9 +10,9 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.concurrency.ThreadingAssertions;
 import org.eclipse.lsp4j.CodeAction;
 import org.eclipse.lsp4j.CodeActionKind;
 import org.eclipse.lsp4j.Range;
@@ -47,14 +47,11 @@ public final class CodeActionService {
 
   @NotNull
   public List<CodeAction> getCodeActions(@NotNull Range range, @NotNull ExecutorContext executorContext) {
-
-    final var result = new Ref<List<CodeAction>>();
+    ThreadingAssertions.assertBackgroundThread();
     final var file = executorContext.getPsiFile();
     final var path = LspPath.fromVirtualFile(file.getVirtualFile());
 
-    final var actionInfo = MiscUtil.computeInEDTAndWait(() ->
-        ShowIntentionsPass.getActionsToShow(executorContext.getEditor(), file, true)
-    );
+    final var actionInfo = ReadAction.compute(() -> ShowIntentionsPass.getActionsToShow(executorContext.getEditor(), file));
 
     final var intentionActions = Stream.of(
             actionInfo.intentionsToShow)
@@ -67,13 +64,9 @@ public final class CodeActionService {
         .flatMap(Collection::stream)
         .map(it -> toCodeAction(path, range, it, CodeActionKind.QuickFix));
 
-    final var actions = Stream.concat(quickFixes, intentionActions)
+    return Stream.concat(quickFixes, intentionActions)
         .filter(distinctByKey(CodeAction::getTitle))
         .collect(Collectors.toList());
-
-    result.set(actions);
-
-    return Optional.ofNullable(result.get()).orElse(Collections.emptyList());
   }
 
   @NotNull
@@ -81,11 +74,10 @@ public final class CodeActionService {
     final var result = new WorkspaceEdit();
     final var editor = executorContext.getEditor();
     final var psiFile = executorContext.getPsiFile();
-    final var path = LspPath.fromVirtualFile(psiFile.getVirtualFile());
     final var oldCopy = ((PsiFile) psiFile.copy());
 
     ApplicationManager.getApplication().invokeAndWait(() -> {
-      final var actionInfo = ShowIntentionsPass.getActionsToShow(editor, psiFile, true);
+      final var actionInfo = ShowIntentionsPass.getActionsToShow(editor, psiFile);
 
       var actionFound = Stream.of(
               actionInfo.errorFixesToShow,
