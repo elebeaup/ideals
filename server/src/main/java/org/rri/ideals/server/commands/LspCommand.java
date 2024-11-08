@@ -21,6 +21,10 @@ public abstract class LspCommand<R> {
 
   protected abstract R execute(@NotNull ExecutorContext ctx);
 
+  protected boolean isRunInEdt() {
+    return true;
+  }
+
   public @NotNull CompletableFuture<@Nullable R> runAsync(@NotNull Project project, @NotNull TextDocumentIdentifier textDocumentIdentifier) {
     return runAsync(project, textDocumentIdentifier.getUri(), null);
   }
@@ -32,10 +36,10 @@ public abstract class LspCommand<R> {
   public @NotNull CompletableFuture<@Nullable R> runAsync(@NotNull Project project, @NotNull String uri, @Nullable Position position) {
     LOG.info(getMessageSupplier().get());
     var client = AsyncExecutor.<R>builder()
-        .executorContext(project, uri, position)
-        .cancellable(isCancellable())
-        .runInEDT(true)
-        .build();
+            .executorContext(project, uri, position)
+            .cancellable(isCancellable())
+            .runInEDT(isRunInEdt())
+            .build();
 
     return client.compute(this::execute);
   }

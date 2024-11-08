@@ -14,6 +14,7 @@ import org.rri.ideals.server.codeactions.CodeActionService;
 import org.rri.ideals.server.completions.CompletionService;
 import org.rri.ideals.server.formatting.FormattingCommand;
 import org.rri.ideals.server.formatting.OnTypeFormattingCommand;
+import org.rri.ideals.server.hover.HoverCommand;
 import org.rri.ideals.server.references.*;
 import org.rri.ideals.server.rename.RenameCommand;
 import org.rri.ideals.server.signature.SignatureHelpService;
@@ -227,4 +228,10 @@ public class MyTextDocumentService implements TextDocumentService {
     return new RenameCommand(params.getNewName())
         .runAsync(session.getProject(), params.getTextDocument(), params.getPosition());
   }
+
+    @Override
+    public CompletableFuture<Hover> hover(HoverParams params) {
+        return new HoverCommand()
+                .runAsync(session.getProject(), params.getTextDocument(), params.getPosition());
+    }
 }

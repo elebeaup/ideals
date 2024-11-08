@@ -118,7 +118,7 @@ public class LspServer implements LanguageServer, LanguageClientAware, LspSessio
           ))
       ));
 
-//      it.setHoverProvider(true);
+      it.setHoverProvider(true);
       it.setCompletionProvider(defaultCompletionOptions());
       it.setSignatureHelpProvider(MiscUtil.with(new SignatureHelpOptions(), signatureHelpOptions -> signatureHelpOptions.setTriggerCharacters(List.of("(", "["))));
       it.setDefinitionProvider(true);
