@@ -21,7 +21,6 @@ import org.rri.ideals.server.util.MiscUtil;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 final public class DiagnosticsListener implements DaemonCodeAnalyzer.DaemonListener, Disposable {
@@ -56,8 +55,8 @@ final public class DiagnosticsListener implements DaemonCodeAnalyzer.DaemonListe
           var path = LspPath.fromVirtualFile(virtualFile);
           var diags = DaemonCodeAnalyzerImpl.getHighlights(document, null, project)
               .stream()
+              .filter(highlightInfo -> highlightInfo.getToolTip() != null && highlightInfo.getDescription() != null)
               .map(highlightInfo -> toDiagnostic(highlightInfo, document))
-              .filter(Objects::nonNull)
               .toList();
           client.publishDiagnostics(new PublishDiagnosticsParams(path.toLspUri(), diags));
         });
@@ -68,10 +67,7 @@ final public class DiagnosticsListener implements DaemonCodeAnalyzer.DaemonListe
     bus.disconnect();
   }
 
-  private Diagnostic toDiagnostic(@NotNull HighlightInfo info, @NotNull Document doc) {
-    if (info.getDescription() == null)
-      return null;
-
+  private @NotNull Diagnostic toDiagnostic(@NotNull HighlightInfo info, @NotNull Document doc) {
     final var range = MiscUtil.getRange(doc, info);
     final var severity = Optional.ofNullable(severityMap.get(info.getSeverity()))
         .orElse(DiagnosticSeverity.Hint);
