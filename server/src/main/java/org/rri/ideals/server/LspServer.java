@@ -22,6 +22,7 @@ import org.rri.ideals.server.diagnostics.DiagnosticsListener;
 import org.rri.ideals.server.util.Metrics;
 import org.rri.ideals.server.util.MiscUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -134,7 +135,14 @@ public class LspServer implements LanguageServer, LanguageClientAware, LspSessio
 
       it.setRenameProvider(true);
 //      it.setDocumentLinkProvider(null);
-//      it.setExecuteCommandProvider(new ExecuteCommandOptions());
+      
+      // Add execute command provider with the list of supported commands
+      it.setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList(
+          "repo-prompt.analyzeDependencies",
+          "repo-prompt.visualizeDependencies",
+          "repo-prompt.analyzeImpact",
+          "repo-prompt.getProjectStructure"
+      )));
 
       it.setCodeActionProvider(
           MiscUtil.with(

@@ -4,7 +4,8 @@ import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 plugins {
   id("java")
   // id("org.jetbrains.kotlin.jvm") version "1.7.0"
-  id("org.jetbrains.intellij.platform") version "2.2.1"
+//  id("org.jetbrains.intellij.platform") version "2.2.1"
+  id("org.jetbrains.intellij.platform") version "2.3.0"
 }
 
 group = "org.rri.ideals.server"
@@ -22,8 +23,12 @@ repositories {
 dependencies {
   implementation("org.eclipse.lsp4j:org.eclipse.lsp4j:0.17.0")
   implementation("io.github.furstenheim:copy_down:1.1")
+  implementation("com.google.code.gson:gson:2.10.1")
+  
   testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
   testImplementation("junit:junit:4.13.2")
+  testImplementation("org.mockito:mockito-core:5.3.1")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 
   intellijPlatform {
@@ -100,4 +105,10 @@ tasks {
   publishPlugin {
     token.set(System.getenv("PUBLISH_TOKEN"))
   }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
