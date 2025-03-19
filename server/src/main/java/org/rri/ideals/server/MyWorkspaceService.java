@@ -6,6 +6,7 @@ import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.WorkspaceService;
 import org.jetbrains.annotations.NotNull;
+import org.rri.ideals.server.executecommand.WorkspaceExecuteCommandService;
 import org.rri.ideals.server.symbol.WorkspaceSymbolService;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class MyWorkspaceService implements WorkspaceService {
     //  during file rename seems client-specific
     //  so VFS refresh may happen too late and thus have no effect
     ApplicationManager.getApplication().invokeAndWait(() -> VirtualFileManager.getInstance().syncRefresh());
+  }
+
+  public CompletableFuture<Object> executeCommand(ExecuteCommandParams params) {
+    return WorkspaceExecuteCommandService.getInstance()
+        .executeCommand(params.getCommand(), params.getArguments(), session.getProject());
   }
 
   private @NotNull WorkspaceSymbolService workspaceSymbol() {

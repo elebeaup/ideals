@@ -19,6 +19,7 @@ import org.eclipse.lsp4j.services.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rri.ideals.server.diagnostics.DiagnosticsListener;
+import org.rri.ideals.server.executecommand.WorkspaceExecuteCommandService;
 import org.rri.ideals.server.util.Metrics;
 import org.rri.ideals.server.util.MiscUtil;
 
@@ -134,7 +135,7 @@ public class LspServer implements LanguageServer, LanguageClientAware, LspSessio
 
       it.setRenameProvider(true);
 //      it.setDocumentLinkProvider(null);
-//      it.setExecuteCommandProvider(new ExecuteCommandOptions());
+      it.setExecuteCommandProvider(new ExecuteCommandOptions(WorkspaceExecuteCommandService.getCommands()));
 
       it.setCodeActionProvider(
           MiscUtil.with(
