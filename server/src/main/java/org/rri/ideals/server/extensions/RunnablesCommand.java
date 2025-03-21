@@ -10,6 +10,7 @@ import com.intellij.execution.configurations.JavaCommandLine;
 import com.intellij.execution.lineMarker.ExecutorAction;
 import com.intellij.execution.lineMarker.LineMarkerActionWrapper;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
+import com.intellij.execution.target.TargetProgressIndicator;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -68,6 +69,7 @@ public class RunnablesCommand extends LspCommand<List<Runnable>> {
                 try {
                   var environment = ExecutionEnvironmentBuilder.create(executor, runnerAndConfigurationSettings).build();
                   var currentState = environment.getState();
+                  var targetEnvironment = environment.getPreparedTargetEnvironment(currentState, TargetProgressIndicator.EMPTY);
                   var commandLine = ((JavaCommandLine) currentState).getJavaParameters().toCommandLine();
                   return new Runnable(actionName, new Runnable.Arguments(
                       commandLine.getWorkingDirectory().toString(),
