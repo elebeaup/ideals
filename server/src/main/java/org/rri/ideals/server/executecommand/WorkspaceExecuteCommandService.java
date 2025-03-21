@@ -14,7 +14,8 @@ import java.util.concurrent.CompletableFuture;
 public final class WorkspaceExecuteCommandService {
 
   private enum Commands {
-    RELOAD_PROJECTS("ideals.reloadProjects");
+    RELOAD_PROJECT("ideals.reloadProject"),
+    COMPILE_PROJECT("ideals.compileProject");
 
     private final String commandId;
 
@@ -49,7 +50,10 @@ public final class WorkspaceExecuteCommandService {
     }
 
     return switch (command) {
-      case RELOAD_PROJECTS -> CompletableFuture.supplyAsync(() -> new ReloadProjectsExecuteCommand().execute(project), AppExecutorUtil.getAppExecutorService());
+      case RELOAD_PROJECT ->
+          CompletableFuture.supplyAsync(() -> new ReloadProjectExecuteCommand().execute(project), AppExecutorUtil.getAppExecutorService());
+      case COMPILE_PROJECT ->
+          CompletableFuture.supplyAsync(() -> new CompileProjectExecuteCommand().execute(project), AppExecutorUtil.getAppExecutorService());
     };
   }
 

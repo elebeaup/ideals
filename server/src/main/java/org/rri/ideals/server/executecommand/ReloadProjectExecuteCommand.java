@@ -10,7 +10,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ReloadProjectsExecuteCommand implements WorkspaceExecuteCommand<Void> {
+public class ReloadProjectExecuteCommand implements WorkspaceExecuteCommand<Void> {
 
   @Override
   public Void execute(@NotNull Project project, Object... arguments) {
